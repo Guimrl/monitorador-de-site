@@ -4,7 +4,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 )
+
+const monitoramentos = 3
+const delay = 5
 
 func main() {
 
@@ -32,7 +36,7 @@ func main() {
 
 func introducao() {
 	nome := "Humano"
-	versao := 1.2
+	versao := 1.3
 	fmt.Println("Olá,", nome)
 	fmt.Println("Este programa está na versão", versao)
 }
@@ -48,13 +52,41 @@ func leComando() int {
 	fmt.Scan(&comandoLido)
 
 	fmt.Println("O comando escolhido foi", comandoLido)
+	fmt.Println("")
 
 	return comandoLido
 }
 
 func iniciarMonitoramento() {
 	fmt.Println("Monitorando...")
-	site := "http://random-status-code.herokuapp.com/"
+	sites := []string{"http://random-status-code.herokuapp.com/",
+		"https://guimrl.github.io/",
+		"https://guimrl.github.io/mortynight-run/",
+		"http://grantoro.epizy.com/",
+		"https://guimrl.github.io/mochila-de-viagem/",
+		"https://robotron-2000-guimrl.vercel.app/",
+		"https://guimrl.github.io/midi-studio/",
+		"https://guimrl.github.io/orcamento-pessoal/",
+		"https://guimrl.github.io/pesquisa-endereco/",
+		"https://guimrl.github.io/to-do-list-poo/",
+		"https://guimrl.github.io/calculadora-orientada-a-objetos/"}
+
+	fmt.Println(sites)
+
+	for i := 0; i < monitoramentos; i++ {
+		for i, site := range sites {
+			fmt.Println("Testando site", i, ":", site)
+			testaSite(site)
+		}
+		time.Sleep(delay * time.Second)
+		fmt.Println("")
+	}
+
+	fmt.Println("")
+
+}
+
+func testaSite(site string) {
 	resp, _ := http.Get(site)
 
 	if resp.StatusCode == 200 {
@@ -63,5 +95,4 @@ func iniciarMonitoramento() {
 		fmt.Println("Site:", site, "está com problemas. Staus Code:",
 			resp.StatusCode)
 	}
-
 }
