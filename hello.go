@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"net/http"
 	"os"
@@ -59,19 +60,8 @@ func leComando() int {
 
 func iniciarMonitoramento() {
 	fmt.Println("Monitorando...")
-	sites := []string{"http://random-status-code.herokuapp.com/",
-		"https://guimrl.github.io/",
-		"https://guimrl.github.io/mortynight-run/",
-		"http://grantoro.epizy.com/",
-		"https://guimrl.github.io/mochila-de-viagem/",
-		"https://robotron-2000-guimrl.vercel.app/",
-		"https://guimrl.github.io/midi-studio/",
-		"https://guimrl.github.io/orcamento-pessoal/",
-		"https://guimrl.github.io/pesquisa-endereco/",
-		"https://guimrl.github.io/to-do-list-poo/",
-		"https://guimrl.github.io/calculadora-orientada-a-objetos/"}
 
-	fmt.Println(sites)
+	sites := leSitesDoArquivo()
 
 	for i := 0; i < monitoramentos; i++ {
 		for i, site := range sites {
@@ -87,7 +77,11 @@ func iniciarMonitoramento() {
 }
 
 func testaSite(site string) {
-	resp, _ := http.Get(site)
+	resp, err := http.Get(site)
+
+	if err != nil {
+		fmt.Println("Ocorreu um erro: ", err)
+	}
 
 	if resp.StatusCode == 200 {
 		fmt.Println("Site:", site, "foi carregado com sucesso!")
@@ -95,4 +89,28 @@ func testaSite(site string) {
 		fmt.Println("Site:", site, "está com problemas. Staus Code:",
 			resp.StatusCode)
 	}
+}
+
+func leSitesDoArquivo() []string {
+
+	var sites []string
+
+	arquivo, err := os.Open("sites.txt")
+
+	if err != nil {
+		fmt.Println("Ocorreu um erro: ", err)
+
+	}
+
+	leitor := bufio.NewReader(arquivo)
+
+	linha, err := leitor.ReadString('\n')
+	if err != nil {
+		fmt.Println("Ocorreu um erro: ", err)
+
+	}
+
+	fmt.Println(linha)
+
+	return sites
 }
