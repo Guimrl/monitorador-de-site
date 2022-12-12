@@ -3,8 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -37,7 +39,7 @@ func main() {
 
 func introducao() {
 	nome := "Humano"
-	versao := 1.3
+	versao := 1.4
 	fmt.Println("Olá,", nome)
 	fmt.Println("Este programa está na versão", versao)
 }
@@ -104,13 +106,18 @@ func leSitesDoArquivo() []string {
 
 	leitor := bufio.NewReader(arquivo)
 
-	linha, err := leitor.ReadString('\n')
-	if err != nil {
-		fmt.Println("Ocorreu um erro: ", err)
+	for {
+		linha, err := leitor.ReadString('\n')
+		linha = strings.TrimSpace(linha)
 
+		sites = append(sites, linha)
+
+		if err == io.EOF {
+			break
+		}
 	}
 
-	fmt.Println(linha)
+	arquivo.Close()
 
 	return sites
 }
